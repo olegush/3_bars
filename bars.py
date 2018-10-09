@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import json
 
 
@@ -7,35 +6,46 @@ def load_data(filepath):
     return json.loads(f.read())
 
 
-def get_biggest_bar(data):
-    item_max = max(data,key=lambda item:item['properties']['Attributes']['SeatsCount'])
-    name_max = item_max['properties']['Attributes']['Name']
-    seats_max = item_max['properties']['Attributes']['SeatsCount']
-    return 'The biggest bar: ' + name_max + ', ' + str(seats_max) + ' seats'
+def get_biggest_bar(data_bars):
+    biggest_bar = max(data_bars, key=lambda bar:
+                      bar['properties']['Attributes']['SeatsCount'])
+    biggest_bar_name = biggest_bar['properties']['Attributes']['Name']
+    biggest_bar_name_seats = \
+        biggest_bar['properties']['Attributes']['SeatsCount']
+    return 'The biggest bar: ' \
+           + biggest_bar_name + ', ' \
+           + str(biggest_bar_name_seats) + ' seats'
 
 
-def get_smallest_bar(data):
-    data_0=filter(lambda item: item['properties']['Attributes']['SeatsCount']>0, data)
-    item_min = min(data_0, key=lambda item: item['properties']['Attributes']['SeatsCount'])
-    name_min = item_min['properties']['Attributes']['Name']
-    seats_min = item_min['properties']['Attributes']['SeatsCount']
-    return 'The smallest bar: ' + name_min + ', ' + str(seats_min) + ' seats'
+def get_smallest_bar(data_bars):
+    smallest_bar_without_zero = \
+        filter(lambda bar: bar['properties']['Attributes']['SeatsCount'] > 0,
+               data_bars)
+    smallest_bar = min(smallest_bar_without_zero, key=lambda bar:
+                       bar['properties']['Attributes']['SeatsCount'])
+    smallest_bar_name_min = smallest_bar['properties']['Attributes']['Name']
+    smallest_bar_seats = smallest_bar['properties']['Attributes']['SeatsCount']
+    return 'The smallest bar: ' + \
+           smallest_bar_name_min + ', ' + str(smallest_bar_seats) + ' seats'
 
 
-def get_closest_bar(data, longitude, latitude):
-    def x_f(item):
-        long = item['geometry']['coordinates'][0]
-        lat = item['geometry']['coordinates'][1]
-        return ((long - longitude) ** 2 + (lat - latitude) ** 2) ** 0.5
-    item_x = min(data,key=lambda item:x_f(item))
-    item_x_name = item_x['properties']['Attributes']['Name']
-    return 'The closest bar: ' + item_x_name
+def get_closest_bar(data_bars, user_longitude, user_latitude):
+    def calc_distance(bar):
+        bar_longitude = bar['geometry']['coordinates'][0]
+        bar_latitude = bar['geometry']['coordinates'][1]
+        return ((bar_longitude - user_longitude) ** 2 +
+                (bar_latitude - user_latitude) ** 2) ** 0.5
+    closest_bar = min(data_bars, key=lambda bar: calc_distance(bar))
+    closest_bar_name = closest_bar['properties']['Attributes']['Name']
+    return 'The closest bar: ' + closest_bar_name
 
 
 if __name__ == '__main__':
-    data_r = load_data('bars.json')
-    print(get_biggest_bar(data_r['features']))
-    print(get_smallest_bar(data_r['features']))
-    longitude = input('Your longitude:')
-    latitude=input('Your latitude:')
-    print(get_closest_bar(data_r['features'], float(longitude), float(latitude)))
+    bars_dict = load_data('bars.json')
+    bars_list = bars_dict['features']
+    print(get_biggest_bar(bars_list))
+    print(get_smallest_bar(bars_list))
+    user_longitude = input('Your longitude:')
+    user_latitude = input('Your latitude:')
+    print(get_closest_bar(bars_list,
+                          float(user_longitude), float(user_latitude)))
