@@ -1,6 +1,6 @@
-# Ближайшие бары
+# Бары Москвы
 
-[FIXME. Здесь будет описание проекта]
+Скрипт ищет по базе data.mos.ru бары с максимальным и минимальным количеством посадочных мест, а также находит ближайший бар по заданным пользователем координатам
 
 # Как запустить
 
@@ -11,9 +11,14 @@
 ```bash
 
 $ python bars.py # possibly requires call of python3 executive instead of just python
-# FIXME вывести пример ответа скрипта
 
-```
+$ python bars.py
+The biggest bar: Спорт бар «Красная машина», 450 seats
+The smallest bar: Бар «ФОРМУЛА КИНО», 1 seats
+Your longitude:37.6215879
+Your latitude:55.765366
+The closest bar: Юнион Джек
+
 
 Запуск на Windows происходит аналогично.
 
