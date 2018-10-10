@@ -2,8 +2,8 @@ import json
 
 
 def load_data(filepath):
-    f = open(filepath, 'rb')
-    return json.loads(f.read())
+    openfile = open(filepath, 'rb')
+    return json.loads(openfile.read())
 
 
 def get_biggest_bar(data_bars):
