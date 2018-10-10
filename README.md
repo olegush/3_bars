@@ -6,21 +6,18 @@
 
 Скрипт требует для своей работы установленного интерпретатора Python версии 3.5
 
-Запуск на Linux:
+```#!bash
 
-```bash
+$ python bars.py 
 
-$ python bars.py # possibly requires call of python3 executive instead of just python
-
-$ python bars.py
 The biggest bar: Спорт бар «Красная машина», 450 seats
 The smallest bar: Бар «ФОРМУЛА КИНО», 1 seats
 Your longitude:37.6215879
 Your latitude:55.765366
 The closest bar: Юнион Джек
 
+```
 
-Запуск на Windows происходит аналогично.
 
 # Цели проекта
 
