@@ -49,10 +49,8 @@ if __name__ == '__main__':
     print('The smallest bar: ' + get_smallest_bar(bars_list))
     while True:
         try:
-            user_longitude = float(input("Your longitude: "))
+            user_longitude = float(input("Your longitude:"))
             user_latitude = float(input('Your latitude:'))
-            print('The closest bar: '
-                  + get_closest_bar(bars_list, user_longitude, user_latitude))
             break
         except NameError:
             print('Incorrect coordinates!')
@@ -60,3 +58,5 @@ if __name__ == '__main__':
             print('Incorrect coordinates!')
         except TypeError:
             print('Incorrect coordinates!')
+    print('The closest bar: '
+          + get_closest_bar(bars_list, user_longitude, user_latitude))
