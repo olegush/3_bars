@@ -29,6 +29,20 @@ def get_smallest_bar(data_bars):
     return smallest_bar_name_min
 
 
+def check_coordinate(coordinate):
+    while True:
+        try:
+            checked_coordinate = float(input(coordinate))
+            break
+        except NameError:
+            pass
+        except ValueError:
+            pass
+        except TypeError:
+            pass
+    return checked_coordinate
+
+
 def calc_distance(bar):
     bar_longitude = bar['geometry']['coordinates'][0]
     bar_latitude = bar['geometry']['coordinates'][1]
@@ -47,16 +61,7 @@ if __name__ == '__main__':
     bars_list = bars_dict['features']
     print('The biggest bar: ' + get_biggest_bar(bars_list))
     print('The smallest bar: ' + get_smallest_bar(bars_list))
-    while True:
-        try:
-            user_longitude = float(input("Your longitude:"))
-            user_latitude = float(input('Your latitude:'))
-            break
-        except NameError:
-            print('Incorrect coordinates!')
-        except ValueError:
-            print('Incorrect coordinates!')
-        except TypeError:
-            print('Incorrect coordinates!')
+    user_longitude = check_coordinate("Your longitude:")
+    user_latitude = check_coordinate("Your latitude:")
     print('The closest bar: '
           + get_closest_bar(bars_list, user_longitude, user_latitude))
