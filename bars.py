@@ -1,19 +1,10 @@
 import json
-import os.path
 import sys
 
 
-def load_data(filepath, error_file, error_json):
-    if os.path.exists(filepath):
-        with open(filepath, 'rb') as file:
-            try:
-                data_json = json.loads(file.read())
-            except ValueError:
-                return error_json
-            else:
-                return data_json
-    else:
-        return error_file
+def load_data(filepath):
+    with open(filepath, 'r') as file:
+        return json.loads(file.read())
 
 
 def check_coordinates(longitude, latitude):
@@ -32,41 +23,44 @@ def calc_distance(bar, user_longitude, user_latitude):
             (bar_latitude - user_latitude) ** 2) ** 0.5
 
 
-def get_bar(bars_list, mode, coordinates):
-    if mode == 'biggest':
-        return max(bars_list, key=lambda bar:
-                   bar['properties']['Attributes']['SeatsCount'])
-    if mode == 'smallest':
-        return min(bars_list, key=lambda bar:
-                   bar['properties']['Attributes']['SeatsCount'])
-    if mode == 'closest':
-        return min(bars_list, key=lambda bar:
-                   calc_distance(bar, coordinates[0], coordinates[1]))
+def get_bar(bars_list, index):
+    return bars_list[index]['properties']['Attributes']['Name']
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
-        user_filepath = sys.argv[1]
-        if os.path.exists(user_filepath):
-            bars_dict = load_data('bars.json', "file does not exists",
-                                  "json data does not exists or incorrect")
-            bars_list = bars_dict['features']
-            biggest_bar = get_bar(bars_list, 'biggest', None)
-            print('The biggest bar: {} '
-                  .format(biggest_bar['properties']['Attributes']['Name']
-                          .encode("UTF-8")))
-            smallest_bar = get_bar(bars_list, 'smallest', None)
-            print('The smallest bar: {} '
-                  .format(smallest_bar['properties']['Attributes']['Name']
-                          .encode("UTF-8")))
-            user_coordinates = check_coordinates("Your longitude:",
-                                                 "Your latitude:")
-            if user_coordinates:
-                closest_bar = get_bar(bars_list, 'closest', user_coordinates)
-                print('The closest bar: {} '
-                      .format(closest_bar['properties']['Attributes']['Name']
-                              .encode("UTF-8")))
-        else:
-            print('need correct file path')
-    else:
-        print('need filename')
+    try:
+        bars_list = load_data(sys.argv[1])['features']
+        biggest_bar_index = bars_list.index(
+            max(bars_list,
+                key=lambda bar:
+                bar['properties']['Attributes']['SeatsCount'])
+        )
+        print(u'The biggest bar: {}'.format(
+            get_bar(bars_list, biggest_bar_index))
+        )
+        smallest_bar_index = bars_list.index(
+            min(bars_list,
+                key=lambda bar:
+                bar['properties']['Attributes']['SeatsCount'])
+        )
+        print(u'The smallest bar: {} '.format(
+            get_bar(bars_list, smallest_bar_index))
+        )
+        user_coordinates = check_coordinates("Your longitude:",
+                                             "Your latitude:")
+        if user_coordinates:
+            closest_bar_index = bars_list.index(
+                min(bars_list,
+                    key=lambda bar:
+                    calc_distance(
+                        bar,
+                        user_coordinates[0],
+                        user_coordinates[1])
+                    )
+            )
+            print(u'The closest bar: {} '
+                  .format(get_bar(bars_list, closest_bar_index)))
+    except IndexError:
+        print('No script parameter (path to txt file)')
+    except IOError:
+        print('No such file or directory')
