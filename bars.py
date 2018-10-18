@@ -16,11 +16,11 @@ def check_coordinates(longitude, latitude):
         print(NameError)
 
 
-def calc_distance(bar, user_longitude, user_latitude):
+def calc_distance(bar, user_coordinates):
     bar_longitude = bar['geometry']['coordinates'][0]
     bar_latitude = bar['geometry']['coordinates'][1]
-    return ((bar_longitude - user_longitude) ** 2 +
-            (bar_latitude - user_latitude) ** 2) ** 0.5
+    return ((bar_longitude - user_coordinates[0]) ** 2 +
+            (bar_latitude - user_coordinates[1]) ** 2) ** 0.5
 
 
 def get_bar(bars_list, index):
@@ -49,18 +49,13 @@ if __name__ == '__main__':
         user_coordinates = check_coordinates("Your longitude:",
                                              "Your latitude:")
         if user_coordinates:
-            closest_bar_index = bars_list.index(
-                min(bars_list,
-                    key=lambda bar:
-                    calc_distance(
-                        bar,
-                        user_coordinates[0],
-                        user_coordinates[1])
-                    )
-            )
+            closest_bar_item = min(bars_list,
+                                   key=lambda bar:
+                                   calc_distance(bar, user_coordinates))
+            closest_bar_index = bars_list.index(closest_bar_item)
             print(u'The closest bar: {} '
                   .format(get_bar(bars_list, closest_bar_index)))
     except IndexError:
-        print('No script parameter (path to txt file)')
+        print('No script parameter (path to json file)')
     except IOError:
         print('No such file or directory')
