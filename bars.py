@@ -8,12 +8,17 @@ def load_data(filepath):
 
 
 def check_coordinates(longitude, latitude):
+    err = 'coordinate must be a float number'
     try:
         user_longitude = float(input(longitude))
         user_latitude = float(input(latitude))
         return user_longitude, user_latitude
-    except Exception as e:
-        print("type error: " + str(e))
+    except NameError:
+        print (err)
+    except TypeError:
+        print (err)
+    except SyntaxError:
+        print (err)
 
 
 def calc_distance(bar, user_coordinates):
