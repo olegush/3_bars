@@ -12,8 +12,8 @@ def check_coordinates(longitude, latitude):
         user_longitude = float(input(longitude))
         user_latitude = float(input(latitude))
         return user_longitude, user_latitude
-    except NameError:
-        print(NameError)
+    except Exception as e:
+        print("type error: " + str(e))
 
 
 def calc_distance(bar, user_coordinates):
@@ -23,39 +23,41 @@ def calc_distance(bar, user_coordinates):
             (bar_latitude - user_coordinates[1]) ** 2) ** 0.5
 
 
-def get_bar(bars_list, index):
-    return bars_list[index]['properties']['Attributes']['Name']
+def get_bar(bar_item):
+    return bar_item['properties']['Attributes']['Name']
+
+
+def get_biggest_bar(bars_list):
+    return max(bars_list,
+               key=lambda bar: bar['properties']['Attributes']['SeatsCount']
+               )
+
+
+def get_smallest_bar(bars_list):
+    return min(bars_list,
+               key=lambda bar: bar['properties']['Attributes']['SeatsCount']
+               )
+
+
+def get_closest_bar(bars_list, user_coordinates):
+    return min(bars_list, key=lambda bar: calc_distance(bar, user_coordinates))
 
 
 if __name__ == '__main__':
     try:
         bars_list = load_data(sys.argv[1])['features']
-        biggest_bar_index = bars_list.index(
-            max(bars_list,
-                key=lambda bar:
-                bar['properties']['Attributes']['SeatsCount'])
-        )
-        print(u'The biggest bar: {}'.format(
-            get_bar(bars_list, biggest_bar_index))
-        )
-        smallest_bar_index = bars_list.index(
-            min(bars_list,
-                key=lambda bar:
-                bar['properties']['Attributes']['SeatsCount'])
-        )
-        print(u'The smallest bar: {} '.format(
-            get_bar(bars_list, smallest_bar_index))
-        )
-        user_coordinates = check_coordinates("Your longitude:",
-                                             "Your latitude:")
-        if user_coordinates:
-            closest_bar_item = min(bars_list,
-                                   key=lambda bar:
-                                   calc_distance(bar, user_coordinates))
-            closest_bar_index = bars_list.index(closest_bar_item)
-            print(u'The closest bar: {} '
-                  .format(get_bar(bars_list, closest_bar_index)))
     except IndexError:
         print('No script parameter (path to json file)')
     except IOError:
         print('No such file or directory')
+    else:
+        print('The biggest bar:')
+        print(get_bar(get_biggest_bar(bars_list)))
+        print('The smallest bar:')
+        print(get_bar(get_smallest_bar(bars_list)))
+        user_coordinates = check_coordinates("Your longitude:",
+                                             "Your latitude:")
+        if user_coordinates:
+            closest_bar = get_closest_bar(bars_list, user_coordinates)
+            print('The closest bar:')
+            print(get_bar(closest_bar))
