@@ -13,11 +13,7 @@ def check_coordinates(longitude, latitude):
         user_longitude = float(input(longitude))
         user_latitude = float(input(latitude))
         return user_longitude, user_latitude
-    except NameError:
-        print (err)
-    except TypeError:
-        print (err)
-    except SyntaxError:
+    except ValueError:
         print (err)
 
 
@@ -28,8 +24,19 @@ def calc_distance(bar, user_coordinates):
             (bar_latitude - user_coordinates[1]) ** 2) ** 0.5
 
 
-def get_bar(bar_item):
-    return bar_item['properties']['Attributes']['Name']
+def get_bar_info_dict(bar_item):
+    bar_info = {}
+    for key, value in bar_item.items():
+        if not isinstance(value, dict):
+            bar_info[key] = value
+        else:
+            for key2, value2 in value.items():
+                if not isinstance(value2, dict):
+                    bar_info[key2] = value2
+                else:
+                    for key3, value3 in value2.items():
+                        bar_info[key3] = value3
+    return bar_info
 
 
 def get_biggest_bar(bars_list):
@@ -50,19 +57,21 @@ def get_closest_bar(bars_list, user_coordinates):
 
 if __name__ == '__main__':
     try:
-        bars_list = load_data(sys.argv[1])['features']
+        bars_data = load_data(sys.argv[1])
     except IndexError:
-        print('No script parameter (path to json file)')
+        exit('No script parameter (path to json file)')
     except IOError:
-        print('No such file or directory')
-    else:
-        print('The biggest bar:')
-        print(get_bar(get_biggest_bar(bars_list)))
-        print('The smallest bar:')
-        print(get_bar(get_smallest_bar(bars_list)))
-        user_coordinates = check_coordinates("Your longitude:",
-                                             "Your latitude:")
-        if user_coordinates:
-            closest_bar = get_closest_bar(bars_list, user_coordinates)
-            print('The closest bar:')
-            print(get_bar(closest_bar))
+        exit('No such file or directory')
+    except ValueError:
+        exit('Not json data')
+    bars_list = bars_data['features']
+    biggest_bar = get_bar_info_dict(get_biggest_bar(bars_list))
+    print('The biggest bar: {}'.format(biggest_bar['Name']))
+    smallest_bar = get_bar_info_dict(get_smallest_bar(bars_list))
+    print('The smallest bar: {}'.format(smallest_bar['Name']))
+    user_coordinates = check_coordinates('Your longitude:', 'Your latitude:')
+    if user_coordinates:
+        closest_bar = get_bar_info_dict(get_closest_bar(
+            bars_list, user_coordinates)
+        )
+        print('The closest bar: {}'.format(closest_bar['Name']))
