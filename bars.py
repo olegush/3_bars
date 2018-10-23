@@ -24,21 +24,6 @@ def calc_distance(bar, user_coordinates):
             (bar_latitude - user_coordinates[1]) ** 2) ** 0.5
 
 
-def get_bar_info_dict(bar_item):
-    bar_info = {}
-    for key, value in bar_item.items():
-        if not isinstance(value, dict):
-            bar_info[key] = value
-        else:
-            for key2, value2 in value.items():
-                if not isinstance(value2, dict):
-                    bar_info[key2] = value2
-                else:
-                    for key3, value3 in value2.items():
-                        bar_info[key3] = value3
-    return bar_info
-
-
 def get_biggest_bar(bars_list):
     return max(bars_list,
                key=lambda bar: bar['properties']['Attributes']['SeatsCount']
@@ -55,6 +40,15 @@ def get_closest_bar(bars_list, user_coordinates):
     return min(bars_list, key=lambda bar: calc_distance(bar, user_coordinates))
 
 
+def get_bar_info_dict(bar_item, bar_info):
+    for key, value in bar_item.items():
+        if not isinstance(value, dict):
+            bar_info[key] = value
+        else:
+            get_bar_info_dict(value, bar_info)
+    return bar_info
+
+
 if __name__ == '__main__':
     try:
         bars_data = load_data(sys.argv[1])
@@ -65,13 +59,14 @@ if __name__ == '__main__':
     except ValueError:
         exit('Not json data')
     bars_list = bars_data['features']
-    biggest_bar = get_bar_info_dict(get_biggest_bar(bars_list))
+    biggest_bar = get_bar_info_dict(get_biggest_bar(bars_list), {})
     print('The biggest bar: {}'.format(biggest_bar['Name']))
-    smallest_bar = get_bar_info_dict(get_smallest_bar(bars_list))
+    smallest_bar = get_bar_info_dict(get_smallest_bar(bars_list), {})
     print('The smallest bar: {}'.format(smallest_bar['Name']))
     user_coordinates = check_coordinates('Your longitude:', 'Your latitude:')
     if user_coordinates:
-        closest_bar = get_bar_info_dict(get_closest_bar(
-            bars_list, user_coordinates)
+        closest_bar = get_bar_info_dict(
+            get_closest_bar(bars_list, user_coordinates),
+            {}
         )
         print('The closest bar: {}'.format(closest_bar['Name']))
