@@ -14,7 +14,7 @@ def check_coordinates(longitude, latitude):
         user_latitude = float(input(latitude))
         return user_longitude, user_latitude
     except ValueError:
-        exit(err)
+        print(err)
 
 
 def calc_distance(bar, user_coordinates):
@@ -64,5 +64,7 @@ if __name__ == '__main__':
     smallest_bar = get_bar_info_dict(get_smallest_bar(bars_list), {})
     print('The smallest bar: {}'.format(smallest_bar['Name']))
     user_coordinates = check_coordinates('Your longitude:', 'Your latitude:')
-    closest_bar = get_bar_info_dict(get_closest_bar(bars_list, user_coordinates),{})
+    closest_bar = get_bar_info_dict(
+        get_closest_bar(bars_list, user_coordinates), {}
+    )
     print('The closest bar: {}'.format(closest_bar['Name']))
