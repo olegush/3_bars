@@ -25,19 +25,24 @@ def calc_distance(bar, user_coordinates):
 
 
 def get_biggest_bar(bars_list):
-    return max(bars_list,
-               key=lambda bar: bar['properties']['Attributes']['SeatsCount']
-               )
+    return max(
+        bars_list,
+        key=lambda bar: bar['properties']['Attributes']['SeatsCount']
+    )
 
 
 def get_smallest_bar(bars_list):
-    return min(bars_list,
-               key=lambda bar: bar['properties']['Attributes']['SeatsCount']
-               )
+    return min(
+        bars_list,
+        key=lambda bar: bar['properties']['Attributes']['SeatsCount']
+    )
 
 
 def get_closest_bar(bars_list, user_coordinates):
-    return min(bars_list, key=lambda bar: calc_distance(bar, user_coordinates))
+    return min(
+        bars_list,
+        key=lambda bar: calc_distance(bar, user_coordinates)
+    )
 
 
 def get_bar_info_dict(bar_item, bar_info):
@@ -47,6 +52,10 @@ def get_bar_info_dict(bar_item, bar_info):
         else:
             get_bar_info_dict(value, bar_info)
     return bar_info
+
+
+def print_bar(bar):
+    return bar['Name']
 
 
 if __name__ == '__main__':
@@ -60,11 +69,11 @@ if __name__ == '__main__':
         exit('Not json data')
     bars_list = bars_data['features']
     biggest_bar = get_bar_info_dict(get_biggest_bar(bars_list), {})
-    print('The biggest bar: {}'.format(biggest_bar['Name']))
+    print('The biggest bar: {}'.format(print_bar(biggest_bar)))
     smallest_bar = get_bar_info_dict(get_smallest_bar(bars_list), {})
-    print('The smallest bar: {}'.format(smallest_bar['Name']))
+    print('The smallest bar: {}'.format(print_bar(smallest_bar)))
     user_coordinates = check_coordinates('Your longitude:', 'Your latitude:')
     closest_bar = get_bar_info_dict(
         get_closest_bar(bars_list, user_coordinates), {}
     )
-    print('The closest bar: {}'.format(closest_bar['Name']))
+    print('The closest bar: {}'.format(print_bar(closest_bar)))
